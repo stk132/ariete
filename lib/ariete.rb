@@ -9,13 +9,20 @@ module Ariete
   ["stdout", "stderr"].each do |name|
     define_method("capture_#{name}") do |*args, &block|
       original = eval("$#{name}")
-      eval("$#{name} = StringIO.new")
+      original_const = eval("#{name.upcase}")
+      original_verbose = $VERBOSE
+      $VERBOSE = nil
+      eval("#{name.upcase} = $#{name} = StringIO.new")
+      $VERBOSE = original_verbose
 
       begin
         block.call(*args)
       ensure
         ret_str = eval("$#{name}").string
+        $VERBOSE = nil
         eval("$#{name} = original")
+        eval("#{name.upcase} = original_const")
+        $VERBOSE = original_verbose
       end
 
       ret_str

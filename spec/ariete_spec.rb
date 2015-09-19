@@ -13,13 +13,33 @@ RSpec.describe Ariete do
     warn "Ariete means 'Lop' in Italian."
   end
 
+  def output_const
+    STDOUT.puts "Ariete is a kind of rabbit."
+    STDERR.puts "Ariete means 'Lop' in Italian."
+  end
+
   describe "#capture_stdout" do
     subject { capture_stdout { output } }
     it { expect(subject).to eq "Ariete is a kind of rabbit.\n" }
   end
 
+  describe "#capture_stdout_const" do
+    subject { capture_stdout { output_const } }
+    it { expect(subject).to eq "Ariete is a kind of rabbit.\n" }
+  end
+
+  describe "#capture_stdout_both" do
+    subject { capture_stdout { output; output_const } }
+    it { expect(subject).to eq "Ariete is a kind of rabbit.\nAriete is a kind of rabbit.\n" }
+  end
+
   describe "#capture_stderr" do
     subject { capture_stderr { output } }
+    it { expect(subject).to eq "Ariete means 'Lop' in Italian.\n" }
+  end
+
+  describe "#capture_stderr_const" do
+    subject { capture_stderr { output_const } }
     it { expect(subject).to eq "Ariete means 'Lop' in Italian.\n" }
   end
 
